@@ -6,7 +6,7 @@
 
 :root {
     --ink: #1c1917;
-    --paper: #ffd9ec;
+    --paper: #fae0ca;
     --accent: #388939;
     --accent-dark: #276e2c;
     --line: #e3d9c9;
@@ -58,6 +58,7 @@ h1, .brand {
     color: var(--ink);
     text-decoration: none;
     font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .hero {
@@ -167,6 +168,74 @@ h1, .brand {
     object-fit: cover;
     border-radius: var(--radius);
     border: 3px solid var(--ink);
+}
+
+.education-section {
+    padding: 3rem 0 5rem;
+    border-top: 1px solid var(--line);
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2rem;
+    display: inline-block;
+    border-bottom: 3px solid var(--accent);
+    padding-bottom: 0.2rem;
+}
+
+.education-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+}
+
+.education-card {
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 4px 4px 0px var(--ink);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.education-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--ink);
+}
+
+.education-card .year {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--paper);
+    background-color: var(--accent-dark);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+}
+
+.education-card h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+}
+
+.education-card .degree {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--accent-dark);
+    margin-bottom: 0.6rem;
+}
+
+.education-card .desc {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
 }
 
 .site-footer {
