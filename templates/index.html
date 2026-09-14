@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
 <body>
     <header class="site-header">
         <div class="container">
-            <a href="{% url 'main:show_main' %}" class="brand">{{ name }}</a>
+            <a href="{% url 'main:show_main' %}" class="brand">{{ name|striptags }}</a>
             <nav>
                 <a href="{% url 'main:show_main' %}">Profile</a>
                 <a href="{% url 'main:show_experience' %}">Experience</a>
@@ -26,11 +27,11 @@
             <div class="container hero-grid">
                 <div class="hero-identity">
                     <p class="hero-kicker">Information Systems &middot; Universitas Indonesia</p>
-                    <h1>{{ name }}</h1>
+                    <h1>{{ name|safe }}</h1>
                 </div>
                 <div class="hero-photo">
-                    <div class="photo-block"></div>
-                    <img class="avatar" src="/static/img/sofie.png" alt="Photo of {{ name }}">
+                    <div class="profile-avatar-container"></div>
+                    <img src="{% static 'profile.png' %}" class="avatar" alt="{{ name }}">
                 </div>
                 <div class="hero-details">
                     <p class="bio">{{ bio }}</p>
@@ -56,7 +57,7 @@
 
     <footer class="site-footer">
         <div class="container">
-            <p>&copy; 2026 {{ name }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
+            <p>&copy; 2026 {{ name|striptags }}. Fakultas Ilmu Komputer, Universitas Indonesia.</p>
         </div>
     </footer>
 </body>

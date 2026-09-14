@@ -29,6 +29,7 @@ class Experience(models.Model):
     thumbnail = models.URLField(blank=True, null=True)
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField(blank=True, null=True)
+    
     def __str__(self):
         return f"{self.title} at {self.organization}" if self.organization else self.title
     
