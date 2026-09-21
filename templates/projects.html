@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="projects-section" style="padding: 2rem 0;">
+    <div class="container" style="max-width: 1000px; margin: 0 auto;">
+        
+        <!-- Header & Tombol Tambah Proyek -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem;">
+            <div>
+                <p style="color: #c05621; font-size: 0.8rem; font-weight: bold; letter-spacing: 1px; margin-bottom: 0.3rem;">KARYA YANG SAYA BANGUN</p>
+                <h1 style="font-size: 2rem; margin: 0; font-weight: bold;">Projects</h1>
+            </div>
+            <a href="{% url 'main:create_project' %}" 
+               style="background-color: #d9534f; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
+                + Tambah Proyek
+            </a>
+        </div>
+
+        <!-- Form Pencarian (Opsional/Sesuai Mockup) -->
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
+            <input type="text" placeholder="Cari berdasarkan nama proyek" style="flex: 1; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;">
+            <button style="background-color: #d9534f; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Cari</button>
+        </div>
+
+        <!-- Grid Kartu Projects -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+            {% for project in projects %}
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.2rem; background-color: #fff;">
+                {% if project.project_image_url %}
+                    <img src="{{ project.project_image_url }}" alt="{{ project.title }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 6px; margin-bottom: 1rem;">
+                {% endif %}
+                
+                <h3 style="margin: 0 0 0.4rem 0; font-size: 1.3rem;">{{ project.title }}</h3>
+                <p style="color: #c05621; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 0.6rem;">{{ project.tech_stack }}</p>
+                <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.2rem;">{{ project.description }}</p>
+
+                <!-- Form Hapus Proyek -->
+                <form action="{% url 'main:delete_project' project.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" 
+                            onclick="return confirm('Yakin ingin menghapus project ini?');" 
+                            style="background-color: #c92a2a; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                        Hapus Proyek
+                    </button>
+                </form>
+            </div>
+            {% empty %}
+                <p>Belum ada project yang ditambahkan.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock content %}

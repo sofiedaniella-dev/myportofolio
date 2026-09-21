@@ -1,6 +1,6 @@
 from django.forms import ModelForm, TextInput, Textarea, URLInput
-
-from main.models import Project
+from django import forms
+from main.models import Project, Experience
 
 class ProjectForm(ModelForm):
     class Meta:
@@ -49,4 +49,21 @@ class ProjectForm(ModelForm):
                     "placeholder": "https://drive.google.com/thumbnail?id=...&sz=w1000",
                 }
             ),
+        }
+
+class ExperienceForm(forms.ModelForm):
+    class Meta:
+        model = Experience
+        fields = [
+            "title", 
+            "organization", 
+            "category", 
+            "description", 
+            "thumbnail", 
+            "started_at", 
+            "ended_at"
+        ]
+        widgets = {
+            'started_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'ended_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
         }

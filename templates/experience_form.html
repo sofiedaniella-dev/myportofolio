@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 2rem auto; padding: 0 1rem;">
+    <h1 style="font-family: serif; font-size: 2rem; margin-bottom: 1.5rem;">Form Experience</h1>
+
+    <form method="POST" class="project-form">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label for="{{ field.id_for_label }}" style="display: block; font-weight: bold; margin-bottom: 0.3rem;">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color: #c92a2a; font-size: 0.85rem; margin-top: 0.2rem;">
+                        {{ field.errors.0 }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div style="margin-top: 1.5rem; display: flex; gap: 0.8rem;">
+            <button type="submit" class="button" style="background-color: #2e7d32; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">
+                Simpan
+            </button>
+            <a href="{% url 'main:show_experience' %}" class="button button-secondary" style="background-color: #111; color: white; padding: 0.6rem 1.2rem; border-radius: 4px; text-decoration: none; font-weight: bold;">
+                Batal
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock content %}

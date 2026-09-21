@@ -1,14 +1,23 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block meta %}
-    <title>Projects - {{ name }}</title>
+    <title>Experience - {{ name }}</title>
 {% endblock meta %}
+
 {% block content %}
     <main>
         <section class="experience-section">
             <div class="container">
                 <p class="section-kicker">Perjalanan saya sejauh ini</p>
-                <h1>Experience</h1>
+                
+                <!-- Header Section + Tombol Tambah -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                    <h1 style="margin: 0;">Experience</h1>
+                    <a href="{% url 'main:create_experience' %}" class="button" style="background-color: #d9534f; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                        + Tambah Pengalaman
+                    </a>
+                </div>
 
                 <div class="experience-grid">
                     {% for experience in experience_list %}
@@ -25,7 +34,27 @@
                             </div>
 
                             <h2 class="exp-title">{{ experience.title }}</h2>
+                            
+                            {% if experience.organization %}
+                                <p class="exp-org" style="font-weight: bold; color: #666; margin-top: -0.5rem;">
+                                    {{ experience.organization }}
+                                </p>
+                            {% endif %}
+
                             <p class="exp-desc">{{ experience.description }}</p>
+
+                            <!-- Tombol Edit & Hapus -->
+                            <div class="card-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                                <a href="{% url 'main:update_experience' experience.id %}" style="background-color: #111; color: white; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                    Edit
+                                </a>
+                                <form action="{% url 'main:delete_experience' experience.id %}" method="POST" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirm('Yakin ingin menghapus pengalaman ini?');" style="background-color: #c92a2a; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </article>
                     {% empty %}
                         <div class="empty-state">
@@ -37,47 +66,3 @@
         </section>
     </main>
 {% endblock content %}
-
-
-
-
-
-
-
-
-
-
-    <main>
-        <section class="experience-section">
-            <div class="container">
-                <p class="section-kicker">Perjalanan saya sejauh ini</p>
-                <h1>Experience</h1>
-
-                <div class="experience-grid">
-                    {% for experience in experience_list %}
-                        <article class="experience-card">
-                            <div class="card-header">
-                                <span class="badge-category">
-                                    {{ experience.get_category_display }}
-                                </span>
-                                {% if experience.is_ongoing %}
-                                    <span class="badge-status status-ongoing">Sedang berlangsung</span>
-                                {% else %}
-                                    <span class="badge-status status-completed">Selesai</span>
-                                {% endif %}
-                            </div>
-
-                            <h2 class="exp-title">{{ experience.title }}</h2>
-                            <p class="exp-desc">{{ experience.description }}</p>
-                        </article>
-                    {% empty %}
-                        <div class="empty-state">
-                            <p>Belum ada pengalaman yang ditambahkan.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-    </main>
-
-   
