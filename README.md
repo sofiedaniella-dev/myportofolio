@@ -49,3 +49,10 @@ Karena ModelForm otomatis membuat field dari model, memiliki validasi tipe data 
 Request masuk > View mengambil data QuerySet dari DB > Serializer mengubah QuerySet jadi string JSON > View mengembalikan `HttpResponse` bernilai JSON.
 Kita perlu melakukan proses serialization pada model Django sebelum datanya dikembalikan karena Objek Python/QuerySet Django tidak bisa dikirim langsung melalui HTTP. Serialization mengubah objek kompleks tersebut menjadi teks JSON murni yang bisa dipahami browser/client.
 
+**Tugas 3 AI Use Disclosure**
+Dalam pengerjaan tugas ini, saya memanfaatkan Generative AI (Gemini) sebagai assistant.
+Tools yang digunakan:
+1. Memberikan potongan kode Django yang sedang dikembangkan secara spesifik beserta pesan error atau perilaku yang tidak sesuai.
+2. Meminta AI memberikan opsi perbaikan paling efisien dan langsung melakukan refactor sesuai dengan kebutuhan  tugas
+3. Meminta penjelasan singkat mengenai konsep teoritis (seperti CSRF, JSON vs XML, dan Serialization) untuk mengembangkan pemahaman.
+
