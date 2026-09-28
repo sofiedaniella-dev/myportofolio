@@ -56,3 +56,12 @@ Tools yang digunakan:
 2. Meminta AI memberikan opsi perbaikan paling efisien dan langsung melakukan refactor sesuai dengan kebutuhan  tugas
 3. Meminta penjelasan singkat mengenai konsep teoritis (seperti CSRF, JSON vs XML, dan Serialization) untuk mengembangkan pemahaman.
 
+
+## AI Disclosure Tugas 4
+Dalam pengerjaan Tugas 4, saya memanfaatkan Generative
+AI (Gemini) sebagai assistant.
+Tools yang digunakan:
+1. Pengecekan dan Debugging kode Django beserta pesan error untuk membantu pengecekan dan meminta penjelasan error message yang muncul.
+2. Membantu dalam refactoring kode agar lebih efisien.
+3. Meminta skenario pengujian (checklist) untuk menguji 4 peran pengguna (guest, user, editor, superuser).
+

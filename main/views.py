@@ -4,13 +4,16 @@ from main.models import Education, Experience, Project
 from main.forms import ProjectForm, ExperienceForm
 from django.contrib import messages
 from django.core import serializers
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required 
-from django.core.exceptions import PermissionDenied      
+from django.core.exceptions import PermissionDenied
 
+
+# Helper function untuk mengecek peran Editor
+def is_editor(user):
+    return user.is_authenticated and user.groups.filter(name='Editor').exists()
 
 
 def show_main(request):
@@ -24,25 +27,27 @@ def show_main(request):
             "in Product Management, Business Strategy, and Digital Innovation."
         ),
         "last_login": last_login,
-    
     }
     return render(request, "index.html", context)
+
 
 def show_education(request):
     education_list = Education.objects.all()
     context = {
-        'name' : 'Sofie Daniella Ang',
-        'education_list' : education_list,
+        'name': 'Sofie Daniella Ang',
+        'education_list': education_list,
     }
     return render(request, "education.html", context)
+
 
 def show_experience(request):
     experience_list = Experience.objects.all()
     context = {
-        'name' : 'Sofie Daniella Ang',
+        'name': 'Sofie Daniella Ang',
         'experience_list': experience_list,
     }
     return render(request, "experience.html", context)
+
 
 def create_experience(request):
     form = ExperienceForm(request.POST or None)
@@ -53,6 +58,7 @@ def create_experience(request):
 
     context = {"form": form}
     return render(request, "experience_form.html", context)
+
 
 def update_experience(request, id):
     experience = get_object_or_404(Experience, pk=id)
@@ -66,6 +72,7 @@ def update_experience(request, id):
     context = {"form": form}
     return render(request, "experience_form.html", context)
 
+
 def delete_experience(request, id):
     experience = get_object_or_404(Experience, pk=id)
     if request.method == "POST":
@@ -73,14 +80,34 @@ def delete_experience(request, id):
         messages.success(request, "Pengalaman berhasil dihapus!")
     return redirect("main:show_experience")
 
+
 def get_experience_json(request):
     data = Experience.objects.all()
     return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
+
+# SHOW PROJECTS (Dapat dibaca oleh siapapun)
+def show_projects(request):
+    title_query = request.GET.get("title", "").strip()
+    
+    projects = Project.objects.all()
+    if title_query:
+        projects = projects.filter(title__icontains=title_query)
+
+    context = {
+        "name": "Sofie Daniella Ang",
+        "projects": projects,  
+        "title_query": title_query,
+        "is_editor": is_editor(request.user), # Dikirim ke template untuk pengondisian tombol edit
+    }
+    return render(request, "projects.html", context)
+
+
+# CREATE PROJECT (Hanya Superuser / Pemilik Portofolio)
 @login_required(login_url="/login/")  
 def create_project(request):
     if not request.user.is_superuser:
-        raise PermissionDenied
+        raise PermissionDenied  # Menghasilkan HTTP 403 Forbidden
     
     form = ProjectForm(request.POST or None)
 
@@ -96,20 +123,45 @@ def create_project(request):
     return render(request, "projects_form.html", context)
 
 
-def show_projects(request):
-    title_query = request.GET.get("title", "").strip()
-    
-    projects = Project.objects.all()
-    if title_query:
-        projects = projects.filter(title__icontains=title_query)
+# UPDATE PROJECT (Bisa diakses Superuser DAN Editor)
+@login_required(login_url="/login/")
+def update_project(request, project_id):
+    if not (request.user.is_superuser or is_editor(request.user)):
+        raise PermissionDenied  # Menghasilkan HTTP 403 Forbidden
+
+    project = get_object_or_404(Project, pk=project_id)
+    form = ProjectForm(request.POST or None, instance=project)
+
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        messages.success(request, "Proyek berhasil diperbarui!")
+        return redirect("main:show_projects")
 
     context = {
         "name": "Sofie Daniella Ang",
-        "projects": projects,  
-        "title_query": title_query,
+        "form": form,
+        "project": project,
     }
-    return render(request, "projects.html", context)
+    return render(request, "projects_form.html", context)
 
+
+# DELETE PROJECT (Hanya Superuser / Pemilik Portofolio)
+@login_required(login_url="/login/")  
+def delete_project(request, project_id):
+    if not request.user.is_superuser:
+        raise PermissionDenied  # Menghasilkan HTTP 403 Forbidden
+    
+    project = get_object_or_404(Project, pk=project_id)
+
+    if request.method == "POST":
+        project.delete()
+        messages.success(request, "Project berhasil dihapus!")
+        return redirect("main:show_projects")
+
+    return redirect("main:show_projects")
+
+
+# GET PROJECTS JSON (Dapat diakses siapapun)
 def get_projects_json(request):
     title_query = request.GET.get("title", "").strip()
     projects = Project.objects.all()
@@ -121,17 +173,16 @@ def get_projects_json(request):
     return HttpResponse(projects_json, content_type="application/json")
 
 
-@login_required(login_url="/login/")  
-def delete_project(request, project_id):
-    if not request.user.is_superuser:
-        raise PermissionDenied
-    
+# TOGGLE STAR (Bisa untuk Pengguna Biasa, Editor, Superuser / Wajib Login)
+@login_required(login_url="/login/")
+def toggle_star(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
 
     if request.method == "POST":
-        project.delete()
-        messages.success(request, "Project berhasil dihapus!")
-        return redirect("main:show_projects")
+        if request.user in project.starred_by.all():
+            project.starred_by.remove(request.user)
+        else:
+            project.starred_by.add(request.user)
 
     return redirect("main:show_projects")
 
@@ -152,7 +203,7 @@ def register(request):
 
 
 def login_user(request):
-    form= AuthenticationForm(request, data=request.POST or None)
+    form = AuthenticationForm(request, data=request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         user = form.get_user()
@@ -167,21 +218,9 @@ def login_user(request):
     }
     return render(request, "login.html", context)
 
+
 def logout_user(request):
     logout(request)
     response = redirect("main:show_main")
     response.delete_cookie('last_login')
-    return response 
-
-
-@login_required(login_url="/login/")
-def toggle_star(request, project_id):
-    project = get_object_or_404(Project, pk=project_id)
-
-    if request.method == "POST":
-        if request.user in project.starred_by.all():
-            project.starred_by.remove(request.user)
-        else:
-            project.starred_by.add(request.user)
-
-    return redirect("main:show_projects")
+    return response

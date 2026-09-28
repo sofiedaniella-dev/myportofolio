@@ -12,19 +12,13 @@
                 <h1 style="font-size: 2rem; margin: 0; font-weight: bold;">Projects</h1>
             </div>
 
-            <!-- Tombol Tambah Proyek hanya tampil untuk Superuser -->
-            {% if user.is_authenticated %}
+            <!-- Hanya Superuser (Pemilik Portofolio) yang bisa Tambah Proyek -->
+            {% if user.is_superuser %}
                 <a href="{% url 'main:create_project' %}" 
                    style="background-color: #d9534f; color: white; padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 0.9rem;">
                    <span aria-hidden="true">+</span> Tambah Proyek
                 </a>
             {% endif %}
-        </div>
-
-        <!-- Form Pencarian -->
-        <div style="display: flex; gap: 0.5rem; margin-bottom: 2rem;">
-            <input type="text" placeholder="Cari berdasarkan nama proyek" style="flex: 1; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px;">
-            <button style="background-color: #d9534f; color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 4px; font-weight: bold; cursor: pointer;">Cari</button>
         </div>
 
         <!-- Grid Kartu Projects -->
@@ -42,15 +36,26 @@
                     <p style="color: #4a5568; font-size: 0.9rem; line-height: 1.4; margin-bottom: 1.2rem;">{{ project.description }}</p>
                 </div>
 
-                <!-- Bagian Action (Star & Hapus) -->
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; pt: 0.5rem; border-top: 1px solid #f1f5f9;">
-                    <!-- Tombol Star untuk semua user -->
+                <!-- Action Controls -->
+                <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #f1f5f9;">
+                    
+                    <!-- Fitur Star (Semua user tersertifikasi/pengunjung dialihkan ke login) -->
                     {% include "components/project_star.html" with project=project %}
 
-                    <!-- Modal Hapus khusus Authenticated -->
-                    {% if user.is_authenticated %}
-                        {% include "components/project_delete_modal.html" with project=project %}
-                    {% endif %}
+                    <div style="display: flex; gap: 0.5rem;">
+                        <!-- Tombol Edit: Hanya untuk Superuser & Editor -->
+                        {% if user.is_superuser or is_editor %}
+                            <a href="{% url 'main:update_project' project.id %}" style="background-color: #3182ce; color: white; padding: 0.4rem 0.8rem; border-radius: 4px; text-decoration: none; font-size: 0.85rem; font-weight: bold;">
+                                Edit
+                            </a>
+                        {% endif %}
+
+                        <!-- Tombol Hapus: Hanya untuk Superuser (Pemilik Portofolio) -->
+                        {% if user.is_superuser %}
+                            {% include "components/project_delete_modal.html" with project=project %}
+                        {% endif %}
+                    </div>
+
                 </div>
             </div>
             {% empty %}
