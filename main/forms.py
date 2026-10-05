@@ -66,19 +66,80 @@ class ProjectForm(ModelForm):
     def clean_description(self):
         return strip_tags(self.cleaned_data["description"]).strip()
 
+
 class ExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
         fields = [
-            "title", 
-            "organization", 
-            "category", 
-            "description", 
-            "thumbnail", 
-            "started_at", 
+            "title",
+            "organization",
+            "category",
+            "description",
+            "thumbnail",
+            "started_at",
             "ended_at"
         ]
         widgets = {
-            'started_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'ended_at': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            "started_at": forms.DateTimeInput(
+                attrs={"type": "datetime-local"}
+            ),
+            "ended_at": forms.DateTimeInput(
+                attrs={"type": "datetime-local"}
+            ),
         }
+
+    def clean_title(self):
+        title = strip_tags(
+            self.cleaned_data["title"]
+        ).strip()
+
+        if not title:
+            raise ValidationError(
+                "Judul pengalaman tidak boleh hanya berisi tag HTML."
+            )
+
+        return title
+
+    def clean_organization(self):
+        return strip_tags(
+            self.cleaned_data["organization"]
+        ).strip()
+
+    def clean_description(self):
+        description = strip_tags(
+            self.cleaned_data["description"]
+        ).strip()
+
+        if not description:
+            raise ValidationError(
+                "Deskripsi pengalaman tidak boleh hanya berisi tag HTML."
+            )
+
+        return description
+
+    def clean_title(self):
+        title = strip_tags(self.cleaned_data["title"]).strip()
+
+        if not title:
+            raise ValidationError(
+                "Judul pengalaman tidak boleh kosong."
+            )
+
+        return title
+
+    def clean_organization(self):
+        return strip_tags(
+            self.cleaned_data["organization"]
+        ).strip()
+
+    def clean_description(self):
+        description = strip_tags(
+            self.cleaned_data["description"]
+        ).strip()
+
+        if not description:
+            raise ValidationError(
+                "Deskripsi pengalaman tidak boleh kosong."
+            )
+
+        return description

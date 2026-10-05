@@ -43,10 +43,9 @@ def show_education(request):
 
 
 def show_experience(request):
-    experience_list = Experience.objects.all()
     context = {
         'name': 'Sofie Daniella Ang',
-        'experience_list': experience_list,
+        'form': ExperienceForm(),
     }
     return render(request, "experience.html", context)
 
@@ -84,9 +83,69 @@ def delete_experience(request, id):
 
 
 def get_experience_json(request):
-    data = Experience.objects.all()
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    title_query = request.GET.get("title", "").strip()
 
+    experiences = Experience.objects.all()
+
+    if title_query:
+        experiences = experiences.filter(
+            title__icontains=title_query
+        )
+
+    data = []
+
+    for experience in experiences:
+        data.append({
+            "pk": str(experience.id),
+            "fields": {
+                "title": experience.title,
+                "organization": experience.organization,
+                "description": experience.description,
+                "category": experience.category,
+                "category_display": experience.get_category_display(),
+                "thumbnail": experience.thumbnail,
+                "started_at": experience.started_at.strftime("%d %B %Y"),
+                "ended_at": (
+                    experience.ended_at.strftime("%d %B %Y")
+                    if experience.ended_at
+                    else None
+                ),
+                "is_ongoing": experience.is_ongoing,
+            }
+        })
+
+    return JsonResponse(data, safe=False)
+
+
+@require_POST
+def create_experience_ajax(request):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return JsonResponse(
+            {
+                "message": "Hanya pemilik portofolio yang dapat menambahkan pengalaman."
+            },
+            status=403,
+        )
+
+    form = ExperienceForm(request.POST)
+
+    if form.is_valid():
+        experience = form.save()
+
+        return JsonResponse(
+            {
+                "message": "Pengalaman berhasil ditambahkan.",
+                "pk": str(experience.id),
+            },
+            status=201,
+        )
+
+    return JsonResponse(
+        {
+            "errors": form.errors.get_json_data()
+        },
+        status=400,
+    )
 
 def show_projects(request):
     title_query = request.GET.get("title", "").strip()
@@ -259,3 +318,27 @@ def create_project_ajax(request):
         )
 
     return JsonResponse({"errors": form.errors.get_json_data()}, status=400)
+
+@require_POST
+def delete_experience_ajax(request, experience_id):
+    if not request.user.is_authenticated or not request.user.is_superuser:
+        return JsonResponse(
+            {
+                "message": "Hanya pemilik portofolio yang dapat menghapus pengalaman."
+            },
+            status=403,
+        )
+
+    experience = get_object_or_404(
+        Experience,
+        pk=experience_id
+    )
+
+    experience.delete()
+
+    return JsonResponse(
+        {
+            "message": "Pengalaman berhasil dihapus."
+        },
+        status=200,
+    )

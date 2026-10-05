@@ -65,3 +65,21 @@ Tools yang digunakan:
 2. Membantu dalam refactoring kode agar lebih efisien.
 3. Meminta skenario pengujian (checklist) untuk menguji 4 peran pengguna (guest, user, editor, superuser).
 
+
+## Tugas 5
+1. Debouncing adalah teknik untuk menunda eksekusi suatu fungsi hingga suatu jeda waktu berlalu tanpa event baru.
+Debouncing penting diterapkan pada fitur pencarian AJAX agar dapat mencegah overload pada server, menghemat konsumsi bandwith internet, mencegah masalah respons yang tidak sesuai urutan, dan meningkatkan pengalaman pengguna (User Experience).
+
+2. Penggunaan await pada fetch() berfungsi untuk menghentikan sementara (pause) eksekusi fungsi async sampai Promise yang dikembalikan oleh fetch() selesai diproses.
+Jika kita tidak menggunakan await:
+- variabel akan langsung menyimpan objek Promise yang statusnya masih pending (bukan data respon/hasil dari server)
+- aplikasi akan menghasilkan error saat mencoba membaca/mengolah data tsb, karena data dari server belum benar-benar diterima.
+
+3. Jelaskan apa itu serangan XSS (Cross-Site Scripting) dan mengapa data yang ditampilkan melalui AJAX/JavaScript lebih rentan terhadap serangan ini daripada data yang ditampilkan langsung melalui template Django!
+XSS (Cross-Site Scripting) adalah jenis kerentanan keamanan web di mana penyerang berhasil menyisipkan skrip berbahaya ke dalam konten halaman web yang dipercayai oleh pengguna lain.
+Data via AJAX/JavaScript lebih rentan dibanding Template Django karena Django Template engine memiliki auto-escaping secara default, Django memperlakukan karakter HTML menjadi bentuk entitas aman.
+
+## AI Disclosure Tugas 5
+Dalam pengerjaan Tugas 5, saya memanfaatkan Generative
+AI (Gemini) sebagai alat bantu untuk memahami konsep dan debuggin kode, khususnya dalam penerapan AJAX dan fetch API yang awalnya terdapat error. Seluruh kode tetap saya implementasikan, uji, dan sesuaikan dengan struktur project yang telah saya kerjakan sebelumnya.
+
